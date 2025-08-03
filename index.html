@@ -2,75 +2,120 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>โรงเรียนตัวอย่าง</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ระบบควบคุม IoT</title>
   <style>
     body {
       font-family: 'Sarabun', sans-serif;
       margin: 0;
-      padding: 0;
+      background-color: #f0f2f5;
+      color: #333;
     }
+
     header {
-      background-color: #1e5799;
+      background-color: #0d6efd;
       color: white;
       padding: 20px;
       text-align: center;
     }
-    nav {
-      background-color: #0f3057;
-      padding: 10px;
-      text-align: center;
-    }
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin: 0 15px;
-      font-weight: bold;
-    }
-    nav a:hover {
-      text-decoration: underline;
-    }
-    main {
+
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      background-color: white;
       padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
     }
-    footer {
-      background-color: #1e5799;
-      color: white;
-      text-align: center;
+
+    .device {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       padding: 15px;
-      margin-top: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .device:last-child {
+      border-bottom: none;
+    }
+
+    .device-name {
+      font-size: 1.2em;
+    }
+
+    .toggle-button {
+      padding: 10px 20px;
+      font-size: 1em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .on {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .off {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #777;
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>โรงเรียนตัวอย่าง</h1>
-    <p>มุ่งพัฒนานักเรียนสู่ความเป็นเลิศทางวิชาการและคุณธรรม</p>
+    <h1>ระบบควบคุม IoT</h1>
+    <p>ควบคุมอุปกรณ์ผ่านอินเทอร์เน็ตได้ทุกที่ ทุกเวลา</p>
   </header>
 
-  <nav>
-    <a href="#">หน้าหลัก</a>
-    <a href="#">เกี่ยวกับเรา</a>
-    <a href="#">ข่าวสาร</a>
-    <a href="#">บุคลากร</a>
-    <a href="#">ติดต่อเรา</a>
-  </nav>
-
-  <main>
-    <h2>ยินดีต้อนรับสู่เว็บไซต์โรงเรียน</h2>
-    <p>โรงเรียนตัวอย่างเป็นสถานศึกษาที่มุ่งเน้นการเรียนรู้ทั้งในด้านวิชาการและการพัฒนาคุณลักษณะอันพึงประสงค์ของนักเรียน</p>
-    <h3>ข่าวสารล่าสุด</h3>
-    <ul>
-      <li>📅 เปิดภาคเรียนที่ 2/2568 วันที่ 15 พฤศจิกายน 2568</li>
-      <li>🏆 นักเรียนชนะเลิศการแข่งขันหุ่นยนต์ระดับประเทศ</li>
-      <li>🎓 รับสมัครนักเรียนใหม่ ปีการศึกษา 2569</li>
-    </ul>
-  </main>
+  <div class="container">
+    <div class="device">
+      <span class="device-name">หลอดไฟในบ้าน</span>
+      <button class="toggle-button off" onclick="toggleDevice(this, 'led')">ปิด</button>
+    </div>
+    <div class="device">
+      <span class="device-name">พัดลมอัตโนมัติ</span>
+      <button class="toggle-button off" onclick="toggleDevice(this, 'fan')">ปิด</button>
+    </div>
+    <div class="device">
+      <span class="device-name">ระบบรดน้ำต้นไม้</span>
+      <button class="toggle-button off" onclick="toggleDevice(this, 'water')">ปิด</button>
+    </div>
+  </div>
 
   <footer>
-    &copy; 2568 โรงเรียนตัวอย่าง | โทร. 02-123-4567 | Email: info@school.ac.th
+    &copy; 2025 IoT School Project | สร้างโดยนักเรียนเพื่อการเรียนรู้
   </footer>
+
+  <script>
+    function toggleDevice(button, deviceId) {
+      const isOn = button.classList.contains('on');
+
+      // Toggle UI
+      if (isOn) {
+        button.classList.remove('on');
+        button.classList.add('off');
+        button.textContent = 'ปิด';
+      } else {
+        button.classList.remove('off');
+        button.classList.add('on');
+        button.textContent = 'เปิด';
+      }
+
+      // ส่งคำสั่งควบคุมไปยังอุปกรณ์ (สมมุติ)
+      fetch(`/iot/control?device=${deviceId}&state=${isOn ? 'off' : 'on'}`)
+        .then(response => console.log('ส่งคำสั่งเรียบร้อย'))
+        .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+    }
+  </script>
 
 </body>
 </html>
