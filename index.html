@@ -1,121 +1,45 @@
 <!DOCTYPE html>
-<html lang="th">
+<html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ระบบควบคุม IoT</title>
-  <style>
-    body {
-      font-family: 'Sarabun', sans-serif;
-      margin: 0;
-      background-color: #f0f2f5;
-      color: #333;
-    }
-
-    header {
-      background-color: #0d6efd;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 30px auto;
-      background-color: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    }
-
-    .device {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px;
-      border-bottom: 1px solid #ddd;
-    }
-
-    .device:last-child {
-      border-bottom: none;
-    }
-
-    .device-name {
-      font-size: 1.2em;
-    }
-
-    .toggle-button {
-      padding: 10px 20px;
-      font-size: 1em;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .on {
-      background-color: #28a745;
-      color: white;
-    }
-
-    .off {
-      background-color: #dc3545;
-      color: white;
-    }
-
-    footer {
-      text-align: center;
-      padding: 20px;
-      color: #777;
-    }
-  </style>
+  <title>ควบคุม LED ผ่าน Firebase</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
-
-  <header>
-    <h1>ระบบควบคุม IoT</h1>
-    <p>ควบคุมอุปกรณ์ผ่านอินเทอร์เน็ตได้ทุกที่ ทุกเวลา</p>
-  </header>
-
-  <div class="container">
-    <div class="device">
-      <span class="device-name">หลอดไฟในบ้าน</span>
-      <button class="toggle-button off" onclick="toggleDevice(this, 'led')">ปิด</button>
-    </div>
-    <div class="device">
-      <span class="device-name">พัดลมอัตโนมัติ</span>
-      <button class="toggle-button off" onclick="toggleDevice(this, 'fan')">ปิด</button>
-    </div>
-    <div class="device">
-      <span class="device-name">ระบบรดน้ำต้นไม้</span>
-      <button class="toggle-button off" onclick="toggleDevice(this, 'water')">ปิด</button>
-    </div>
-  </div>
-
-  <footer>
-    &copy; 2025 IoT School Project | สร้างโดยนักเรียนเพื่อการเรียนรู้
-  </footer>
+  <h2>🔥 ควบคุมหลอดไฟ LED</h2>
+  <button onclick="turnOn()">เปิด LED</button>
+  <button onclick="turnOff()">ปิด LED</button>
+  <p>สถานะ: <span id="ledStatus">--</span></p>
 
   <script>
-    function toggleDevice(button, deviceId) {
-      const isOn = button.classList.contains('on');
+    // ตั้งค่า Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyCnxIBAHPu36Yc07s4Ffp5_N9IAgCT9kQM",
+      authDomain: "iotproject-521b3.firebaseapp.com",
+      databaseURL: "https://iotproject-521b3-default-rtdb.firebaseio.com",
+      projectId: "iotproject-521b3",
+      storageBucket: "iotproject-521b3.firebasestorage.app",
+      messagingSenderId: "948154155785",
+      appId: "1:948154155785:web:f9fffb76a6fc9d942d49d8"
+    };
 
-      // Toggle UI
-      if (isOn) {
-        button.classList.remove('on');
-        button.classList.add('off');
-        button.textContent = 'ปิด';
-      } else {
-        button.classList.remove('off');
-        button.classList.add('on');
-        button.textContent = 'เปิด';
-      }
+    // เริ่มต้น Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-      // ส่งคำสั่งควบคุมไปยังอุปกรณ์ (สมมุติ)
-      fetch(`/iot/control?device=${deviceId}&state=${isOn ? 'off' : 'on'}`)
-        .then(response => console.log('ส่งคำสั่งเรียบร้อย'))
-        .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+    function turnOn() {
+      db.ref("led").set("on");
     }
-  </script>
 
+    function turnOff() {
+      db.ref("led").set("off");
+    }
+
+    // อัปเดตสถานะแบบ real-time
+    db.ref("led").on("value", (snapshot) => {
+      document.getElementById("ledStatus").innerText = snapshot.val();
+    });
+  </script>
 </body>
 </html>
