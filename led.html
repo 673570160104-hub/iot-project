@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>ควบคุม LED ผ่าน Firebase</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Kanit", sans-serif;
+      background-color: #0a0a0f;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 2.2rem;
+      color: #0ff;
+      text-shadow: 0 0 8px #0ff, 0 0 16px #0ff, 0 0 32px #0ff;
+      margin-bottom: 30px;
+    }
+
+    button {
+      background: transparent;
+      border: 2px solid #0ff;
+      color: #0ff;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 12px 28px;
+      margin: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      text-shadow: 0 0 8px #0ff;
+      box-shadow: 0 0 6px #0ff, inset 0 0 6px #0ff;
+    }
+
+    button:hover {
+      background: #0ff;
+      color: #000;
+      box-shadow: 0 0 12px #0ff, 0 0 24px #0ff, 0 0 48px #0ff;
+    }
+
+    p {
+      margin-top: 20px;
+      font-size: 1.3rem;
+    }
+
+    #ledStatus {
+      font-weight: bold;
+      color: #f0f;
+      text-shadow: 0 0 8px #f0f, 0 0 16px #f0f;
+    }
+
+    /* เอฟเฟกต์กรอบนีออน */
+    .neon-box {
+      border: 2px solid #0ff;
+      border-radius: 12px;
+      padding: 40px;
+      box-shadow: 0 0 15px #0ff, 0 0 30px #0ff inset;
+    }
+  </style>
+</head>
+<body>
+  <div class="neon-box">
+    <h2>🔥 ควบคุมหลอดไฟ LED</h2>
+    <button onclick="turnOn()">เปิด LED</button>
+    <button onclick="turnOff()">ปิด LED</button>
+    <p>สถานะ: <span id="ledStatus">--</span></p>
+  </div>
+
+  <script>
+    // ตั้งค่า Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyCnxIBAHPu36Yc07s4Ffp5_N9IAgCT9kQM",
+      authDomain: "iotproject-521b3.firebaseapp.com",
+      databaseURL: "https://iotproject-521b3-default-rtdb.firebaseio.com",
+      projectId: "iotproject-521b3",
+      storageBucket: "iotproject-521b3.firebasestorage.app",
+      messagingSenderId: "948154155785",
+      appId: "1:948154155785:web:f9fffb76a6fc9d942d49d8"
+    };
+
+    // เริ่มต้น Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function turnOn() {
+      db.ref("led").set("on");
+    }
+
+    function turnOff() {
+      db.ref("led").set("off");
+    }
+
+    // อัปเดตสถานะแบบ real-time
+    db.ref("led").on("value", (snapshot) => {
+      document.getElementById("ledStatus").innerText = snapshot.val();
+    });
+  </script>
+</body>
+</html>
