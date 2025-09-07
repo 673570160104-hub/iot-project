@@ -16,7 +16,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
       text-align: center;
     }
 
@@ -24,17 +24,26 @@
       font-size: 2.2rem;
       color: #0ff;
       text-shadow: 0 0 8px #0ff, 0 0 16px #0ff, 0 0 32px #0ff;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
+    }
+
+    .led-box {
+      border: 2px solid #0ff;
+      border-radius: 12px;
+      padding: 25px;
+      margin: 20px;
+      box-shadow: 0 0 15px #0ff, 0 0 30px #0ff inset;
+      width: 250px;
     }
 
     button {
       background: transparent;
       border: 2px solid #0ff;
       color: #0ff;
-      font-size: 1.2rem;
+      font-size: 1rem;
       font-weight: bold;
-      padding: 12px 28px;
-      margin: 10px;
+      padding: 10px 24px;
+      margin: 8px;
       border-radius: 8px;
       cursor: pointer;
       text-transform: uppercase;
@@ -50,31 +59,44 @@
     }
 
     p {
-      margin-top: 20px;
-      font-size: 1.3rem;
+      margin-top: 12px;
+      font-size: 1.2rem;
     }
 
-    #ledStatus {
+    .status {
       font-weight: bold;
       color: #f0f;
       text-shadow: 0 0 8px #f0f, 0 0 16px #f0f;
     }
 
-    /* เอฟเฟกต์กรอบนีออน */
-    .neon-box {
-      border: 2px solid #0ff;
-      border-radius: 12px;
-      padding: 40px;
-      box-shadow: 0 0 15px #0ff, 0 0 30px #0ff inset;
+    .all-control {
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
-  <div class="neon-box">
-    <h2>🔥 ควบคุมหลอดไฟ LED</h2>
-    <button onclick="turnOn()">เปิด LED</button>
-    <button onclick="turnOff()">ปิด LED</button>
+  <h2>🔥 ควบคุมหลอดไฟ LED</h2>
+
+  <!-- ปุ่มควบคุมทั้งหมด -->
+  <div class="all-control">
+    <button onclick="turnOnAll()">เปิดทั้งหมด</button>
+    <button onclick="turnOffAll()">ปิดทั้งหมด</button>
+  </div>
+
+  <!-- กล่องควบคุม LED1 -->
+  <div class="led-box">
+    <h3>LED 1</h3>
+    <button onclick="turnOn('led')">เปิด</button>
+    <button onclick="turnOff('led')">ปิด</button>
     <p>สถานะ: <span id="ledStatus">--</span></p>
+  </div>
+
+  <!-- กล่องควบคุม LED2 -->
+  <div class="led-box">
+    <h3>LED 2</h3>
+    <button onclick="turnOn('led2')">เปิด</button>
+    <button onclick="turnOff('led2')">ปิด</button>
+    <p>สถานะ: <span id="ledStatus2">--</span></p>
   </div>
 
   <script>
@@ -93,17 +115,31 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    function turnOn() {
-      db.ref("led").set("on");
+    // ฟังก์ชันเปิดปิดไฟเดี่ยว
+    function turnOn(path) {
+      db.ref(path).set("on");
+    }
+    function turnOff(path) {
+      db.ref(path).set("off");
     }
 
-    function turnOff() {
+    // ฟังก์ชันเปิดปิดไฟทั้งหมด
+    function turnOnAll() {
+      db.ref("led").set("on");
+      db.ref("led2").set("on");
+    }
+    function turnOffAll() {
       db.ref("led").set("off");
+      db.ref("led2").set("off");
     }
 
     // อัปเดตสถานะแบบ real-time
     db.ref("led").on("value", (snapshot) => {
       document.getElementById("ledStatus").innerText = snapshot.val();
+    });
+
+    db.ref("led2").on("value", (snapshot) => {
+      document.getElementById("ledStatus2").innerText = snapshot.val();
     });
   </script>
 </body>
